@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Text Extractor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body>
+    <h1 >Extracted PDF Text</h1>
+    <div id="pdf-text" style="white-space: pre-wrap;"></div> <!-- Where text will be displayed -->
+    <button id = "quoteButton" onclick="loadQuote()"> random quote </button>
+    <script>
+async function loadQuote() {
+var pdfUrl = '400-motivational-quotes.pdf';
+let fullText = "";
+let pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+for(i = 1 ; i<=31 ;i++){
+let page = await pdf.getPage(i);
+let textContent = await page.getTextContent();
+let text = textContent.items.map(item => item.str).join(' ');
+fullText += text + "/n"; 
+
+}
+let quoteNumber = Math.floor(Math.random()*30);
+
+let regex = new RegExp(`\\b${quoteNumber}\\.\\s(.*?)\\s\\d+\\.`, 's'); 
+let match = fullText.match(regex);
+
+if (match) {
+let quote = match[1].trim();
+    document.getElementById('pdf-text').textContent = quote;
+    } else {
+    document.getElementById('pdf-text').textContent = "Quote not found.";
+    }
+
+}      
+window.onload =  function () {
+    loadQuote();
+};
+    </script>
+</body>
+</html>
